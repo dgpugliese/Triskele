@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    background-color: #050608;
+    color: #dee3e5;
+  }
+  body {
+    font-family: Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply bg-obsidian border border-white/10 rounded-xl;
+  }
+  .panel-raised {
+    @apply bg-graphite border border-white/5 rounded-xl;
+  }
+  .chip {
+    @apply text-micro-mono font-mono border px-2 py-0.5 rounded inline-flex items-center gap-1.5;
+  }
+  .chip-sealed   { @apply border-proof-green/30 text-proof-green; }
+  .chip-pending  { @apply border-seal-amber/30 text-seal-amber; }
+  .chip-breach   { @apply border-breach-red/40 text-breach-red; }
+  .chip-cipher   { @apply border-cipher-blue/30 text-cipher-blue; }
+  .chip-ash      { @apply border-ash/30 text-ash; }
+  .btn-primary {
+    @apply bg-cipher-blue text-void font-semibold py-3 px-6 rounded
+           hover:opacity-90 active:scale-[0.98] transition-all
+           shadow-cipher-glow inline-flex items-center justify-center gap-2;
+  }
+  .btn-secondary {
+    @apply border border-slate text-white py-3 px-6 rounded
+           hover:bg-slate transition-all inline-flex items-center justify-center gap-2;
+  }
+  .btn-danger {
+    @apply border border-breach-red/40 text-breach-red py-3 px-6 rounded
+           hover:bg-breach-red/10 transition-all inline-flex items-center justify-center gap-2;
+  }
+  .input-cipher {
+    @apply bg-void border border-slate rounded px-3 py-2 text-body text-white
+           placeholder:text-ash focus:outline-none focus:border-cipher-blue/50
+           focus:ring-1 focus:ring-cipher-blue/30;
+  }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #050608; }
+::-webkit-scrollbar-thumb { background: #1B222B; border-radius: 2px; }
