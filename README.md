@@ -38,6 +38,10 @@ supabase/migrations/      0001_init.sql — schema with RLS
 scripts/smoke.mjs         end-to-end crypto round-trip test (Node)
 ```
 
+## Try it live
+
+A live preview is deployed at **https://triskele-6ct.pages.dev** on Cloudflare Pages.
+
 ## Quick start
 
 ```bash
@@ -45,6 +49,27 @@ npm install
 npm run dev
 # open http://localhost:3000
 ```
+
+## Deploying to Cloudflare Pages
+
+The app builds with `@cloudflare/next-on-pages` — static pages are prerendered, the three
+dynamic routes (`/app/vaults/[id]`, `/app/vaults/[id]/recover`, `/app/guardian/[requestId]`)
+ship as edge functions.
+
+```bash
+# one-shot deploy from your local checkout (needs `wrangler login` once)
+npm run pages:deploy
+
+# or just produce the artifact for inspection
+npm run pages:build      # writes .vercel/output/static
+npm run pages:preview    # serves it locally with wrangler
+```
+
+For continuous deploys, connect this repo in the Cloudflare dashboard with:
+
+- **Build command:** `npx @cloudflare/next-on-pages`
+- **Build output dir:** `.vercel/output/static`
+- **Compatibility flag:** `nodejs_compat`
 
 The app starts in **demo mode** (localStorage). Provision four identities — Vault Owner +
 G-01/G-02/G-03 — from onboarding. Switch identities from the top bar to play through the
