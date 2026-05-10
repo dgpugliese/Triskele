@@ -146,21 +146,22 @@ function TrustStrip() {
   ];
   return (
     <section className="border-y border-white/5 bg-obsidian/40">
-      <div
+      <ul
         className="max-w-container-max mx-auto px-5 sm:px-6 md:px-10 py-5 sm:py-6
-                   grid grid-cols-2 md:flex md:flex-wrap md:items-center md:justify-between
-                   gap-x-4 gap-y-3 sm:gap-x-6"
+                   flex flex-col items-start gap-3
+                   sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3
+                   md:flex md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6"
       >
         {items.map((it) => (
-          <div
+          <li
             key={it}
-            className="flex items-center gap-2 text-[10px] sm:text-micro-mono font-mono text-ash uppercase tracking-widest"
+            className="flex items-center gap-2 text-micro-mono font-mono text-ash uppercase tracking-widest"
           >
-            <Icon name="bolt" className="text-cipher-blue text-sm sm:text-base shrink-0" />
-            <span className="truncate">{it}</span>
-          </div>
+            <Icon name="bolt" className="text-cipher-blue text-base shrink-0" />
+            <span>{it}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
