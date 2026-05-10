@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { useIdentity } from "@/components/identity-provider";
@@ -77,7 +78,7 @@ export function CreateVault() {
         },
         guardianRows,
       );
-      router.push(`/vaults/${created.id}`);
+      router.push(`/app/vaults/${created.id}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "sealing failed");
     } finally {
@@ -89,30 +90,34 @@ export function CreateVault() {
     <div className="space-y-10">
       <header className="space-y-3">
         <div className="flex items-center gap-2 text-micro-mono font-mono text-ash">
-          <span>Vaults</span>
+          <Link href="/app" className="hover:text-cipher-blue">Vaults</Link>
           <Icon name="chevron_right" className="text-sm" />
           <span className="text-white">New</span>
         </div>
         <h1 className="text-page-title md:text-hero font-display tracking-tight text-white">
-          Provision a new vault
+          Create a new vault
         </h1>
         <p className="text-body text-mist max-w-2xl">
-          Your payload is encrypted in this browser with a freshly-generated AES-256 key. The
-          key is split via Shamir secret sharing — the server never sees it.
+          What you write below stays in this browser until it&apos;s encrypted. The key
+          that opens it gets split between your guardians — no one piece is enough.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <section className="lg:col-span-8 space-y-6">
           <div className="panel p-6 space-y-4">
-            <Field label="Vault title">
+            <Field label="What is this?" hint="A short name only you and your guardians will see.">
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="input-cipher w-full"
+                placeholder="Estate Documents"
               />
             </Field>
-            <Field label="Description (optional, stored as plaintext metadata)">
+            <Field
+              label="One-line description"
+              hint="Visible without unlocking. Don't put anything secret here."
+            >
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -123,11 +128,16 @@ export function CreateVault() {
 
           <div className="panel p-0 overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 bg-graphite/30 flex items-center justify-between">
-              <h3 className="text-micro-mono font-mono font-bold text-cipher-blue">
-                PLAINTEXT.PAYLOAD
-              </h3>
-              <span className="text-micro-mono font-mono text-ash">
-                {payload.length} chars · client-side only
+              <div className="space-y-0.5">
+                <h3 className="text-micro-mono font-mono font-bold text-cipher-blue tracking-widest">
+                  THE SECRET
+                </h3>
+                <p className="text-micro-mono font-mono text-ash">
+                  Whatever you want only your circle to see.
+                </p>
+              </div>
+              <span className="chip chip-cipher">
+                <Icon name="lock" className="text-xs" /> {payload.length} CHARS · LOCAL ONLY
               </span>
             </div>
             <textarea
@@ -135,15 +145,15 @@ export function CreateVault() {
               onChange={(e) => setPayload(e.target.value)}
               className="w-full min-h-[260px] bg-void text-white font-mono text-small leading-relaxed
                          p-6 outline-none resize-y"
-              placeholder="Paste secret payload…"
+              placeholder="Paste a will, a recovery phrase, account credentials — anything."
             />
           </div>
         </section>
 
         <aside className="lg:col-span-4 space-y-6">
           <div className="panel p-6 space-y-4">
-            <h3 className="text-micro-mono font-mono font-bold text-ash uppercase">
-              Quorum Threshold
+            <h3 className="text-micro-mono font-mono font-bold text-ash uppercase tracking-widest">
+              How many to unlock?
             </h3>
             <div className="flex items-center gap-4">
               <input
@@ -154,12 +164,14 @@ export function CreateVault() {
                 onChange={(e) => setThreshold(parseInt(e.target.value, 10))}
                 className="flex-1 accent-cipher-blue"
               />
-              <span className="text-page-title font-display text-white">
+              <span className="text-page-title font-display text-white tabular-nums">
                 {threshold}/{selected.length || 0}
               </span>
             </div>
             <p className="text-small text-ash">
-              At least {threshold} of {selected.length || 0} guardians must approve to unseal.
+              <span className="text-mist">{threshold}</span> guardians out of{" "}
+              <span className="text-mist">{selected.length || 0}</span> need to approve before
+              this can be unsealed.
             </p>
           </div>
 
@@ -219,11 +231,12 @@ export function CreateVault() {
           >
             {working ? (
               <>
-                <Icon name="hourglass_top" /> SEALING…
+                <span className="w-4 h-4 rounded-full border-2 border-void/40 border-t-void animate-spin" />
+                Sealing…
               </>
             ) : (
               <>
-                <Icon name="lock" /> Seal vault
+                <Icon name="lock" /> Seal this vault
               </>
             )}
           </button>
@@ -233,11 +246,20 @@ export function CreateVault() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <label className="block space-y-1">
-      <span className="text-micro-mono font-mono text-ash uppercase">{label}</span>
+    <label className="block space-y-1.5">
+      <span className="text-small text-white font-medium block">{label}</span>
       {children}
+      {hint && <span className="text-micro-mono font-mono text-ash block">{hint}</span>}
     </label>
   );
 }

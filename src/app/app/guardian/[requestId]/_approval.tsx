@@ -71,7 +71,7 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
         <p className="text-body text-mist">
           This request is not addressed to you, or has already been resolved.
         </p>
-        <Link href="/guardian" className="btn-secondary inline-flex">
+        <Link href="/app/guardian" className="btn-secondary inline-flex">
           Back to inbox
         </Link>
       </div>
@@ -110,68 +110,64 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
     <div className="space-y-10">
       <header className="space-y-3">
         <div className="flex items-center gap-2 text-micro-mono font-mono text-ash">
-          <Link href="/guardian" className="hover:text-cipher-blue">Inbox</Link>
+          <Link href="/app/guardian" className="hover:text-cipher-blue">Inbox</Link>
           <Icon name="chevron_right" className="text-sm" />
           <span className="text-white">{request.shortId}</span>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-page-title md:text-hero font-display tracking-tight text-white">
-            Approval requested
+            They&apos;re asking to open <span className="text-cipher-blue">{vault.title}</span>.
           </h1>
-          <span className="chip chip-pending">QUORUM CALL</span>
         </div>
         <p className="text-body text-mist max-w-2xl">
-          You hold fragment{" "}
-          <span className="text-white font-mono">#{myGuardianRecord.fragmentIndex}</span>{" "}
-          (<span className="font-mono">{myGuardianRecord.fragmentFingerprint}</span>) for{" "}
-          <span className="text-white">{vault.title}</span>.
+          You&apos;re one of three guardians on this vault. Approve only if you trust this
+          request — your piece, plus the other two, will unlock it.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <section className="lg:col-span-8 space-y-6">
           <div className="panel p-6 space-y-4">
-            <h3 className="text-micro-mono font-mono font-bold text-ash uppercase">
-              Request details
-            </h3>
-            <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="border-l-2 border-cipher-blue/40 pl-4 space-y-1">
+              <span className="text-micro-mono font-mono text-ash uppercase tracking-widest">
+                Their reason
+              </span>
+              <p className="text-body text-white leading-relaxed">{request.reason}</p>
+            </div>
+            <dl className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 border-t border-white/5">
               <Detail label="Vault">{vault.title}</Detail>
-              <Detail label="Vault ID">{vault.shortId}</Detail>
               <Detail label="Threshold">
-                {vault.threshold} of {vault.totalShares}
+                {vault.threshold} of {vault.totalShares} guardians
               </Detail>
               <Detail label="Expires">
-                {new Date(request.expiresAt).toLocaleString()}
+                {new Date(request.expiresAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </Detail>
             </dl>
-            <div className="border-t border-white/5 pt-4 space-y-1">
-              <span className="text-micro-mono font-mono text-ash uppercase">
-                Reason cited
-              </span>
-              <p className="text-body text-white">{request.reason}</p>
-            </div>
           </div>
 
           <div className="panel p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Icon name="info" className="text-cipher-blue" />
-              <h3 className="text-micro-mono font-mono font-bold text-cipher-blue uppercase">
-                What approval does
+              <h3 className="text-micro-mono font-mono font-bold text-cipher-blue uppercase tracking-widest">
+                If you approve
               </h3>
             </div>
             <ul className="space-y-3 text-small text-mist">
               <li className="flex gap-3">
                 <span className="text-micro-mono font-mono text-proof-green mt-0.5">01</span>
-                Decrypts your wrapped fragment locally with your private key.
+                This device unlocks your piece of the key.
               </li>
               <li className="flex gap-3">
                 <span className="text-micro-mono font-mono text-proof-green mt-0.5">02</span>
-                Re-wraps the fragment to the requester&apos;s ephemeral public key (only they
-                can decrypt it).
+                It re-locks the piece so only the person asking can read it.
               </li>
               <li className="flex gap-3">
                 <span className="text-micro-mono font-mono text-proof-green mt-0.5">03</span>
-                Posts the wrapped response. The server still cannot read your fragment.
+                It&apos;s sent. The server still can&apos;t see what your piece says.
               </li>
             </ul>
           </div>
@@ -206,14 +202,14 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
                 You {myExistingResponse?.decision}d this request on{" "}
                 {new Date(myExistingResponse?.respondedAt ?? "").toLocaleString()}.
               </p>
-              <Link href="/guardian" className="btn-secondary w-full">
+              <Link href="/app/guardian" className="btn-secondary w-full">
                 Back to inbox
               </Link>
             </div>
           ) : (
             <div className="panel p-6 space-y-3">
-              <h3 className="text-micro-mono font-mono font-bold text-ash uppercase">
-                Decision
+              <h3 className="text-micro-mono font-mono font-bold text-ash uppercase tracking-widest">
+                Your decision
               </h3>
               <button
                 onClick={() => decide("approve")}
@@ -222,11 +218,12 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
               >
                 {busy === "approve" ? (
                   <>
-                    <Icon name="hourglass_top" /> SIGNING…
+                    <span className="w-4 h-4 rounded-full border-2 border-void/40 border-t-void animate-spin" />
+                    Approving…
                   </>
                 ) : (
                   <>
-                    <Icon name="check" /> Approve & re-wrap
+                    <Icon name="check" /> Approve
                   </>
                 )}
               </button>
@@ -237,7 +234,8 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
               >
                 {busy === "deny" ? (
                   <>
-                    <Icon name="hourglass_top" /> RECORDING…
+                    <span className="w-4 h-4 rounded-full border-2 border-breach-red/30 border-t-breach-red animate-spin" />
+                    Recording…
                   </>
                 ) : (
                   <>
@@ -245,6 +243,9 @@ export function GuardianApproval({ requestId }: { requestId: string }) {
                   </>
                 )}
               </button>
+              <p className="text-micro-mono font-mono text-ash text-center pt-2">
+                You can&apos;t change this later.
+              </p>
             </div>
           )}
         </aside>

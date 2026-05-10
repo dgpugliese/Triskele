@@ -6,10 +6,10 @@ import { useIdentity } from "./identity-provider";
 import { Icon } from "./icon";
 
 const NAV = [
-  { href: "/", label: "Vaults", icon: "lock" },
-  { href: "/guardian", label: "Guardian Inbox", icon: "shield" },
-  { href: "/audit", label: "Audit Log", icon: "history" },
-  { href: "/settings", label: "Settings", icon: "terminal" },
+  { href: "/app", label: "Vaults", icon: "lock" },
+  { href: "/app/guardian", label: "Guardian Inbox", icon: "shield" },
+  { href: "/app/audit", label: "Audit Log", icon: "history" },
+  { href: "/app/settings", label: "Settings", icon: "terminal" },
 ];
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -41,7 +41,7 @@ function TopBar({
     <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-obsidian border-b border-white/10 px-gutter flex items-center">
       <div className="max-w-container-max mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/app" className="flex items-center gap-3">
             <span className="w-7 h-7 rounded bg-cipher-blue grid place-items-center">
               <Icon name="shield" filled className="text-void text-base" />
             </span>
@@ -90,7 +90,7 @@ function SideNav({ pathname }: { pathname: string }) {
       </div>
       <nav className="flex-1 space-y-1">
         {NAV.map((n) => {
-          const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+          const active = n.href === "/app" ? pathname === "/app" : pathname.startsWith(n.href);
           return (
             <Link
               key={n.href}
@@ -108,9 +108,9 @@ function SideNav({ pathname }: { pathname: string }) {
         })}
       </nav>
       <div className="px-6 pb-8">
-        <Link href="/vaults/new" className="btn-primary w-full">
-          <Icon name="add_moderator" />
-          Provision Vault
+        <Link href="/app/vaults/new" className="btn-primary w-full">
+          <Icon name="enhanced_encryption" />
+          New vault
         </Link>
       </div>
     </aside>
@@ -121,7 +121,7 @@ function BottomNav({ pathname }: { pathname: string }) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden h-16 bg-obsidian border-t border-white/10 flex items-center justify-around">
       {NAV.map((n) => {
-        const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+        const active = n.href === "/app" ? pathname === "/app" : pathname.startsWith(n.href);
         return (
           <Link
             key={n.href}
