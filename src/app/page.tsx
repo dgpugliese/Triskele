@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BrandMark } from "@/components/brand-mark";
+import { BrandLockup, BrandMark } from "@/components/brand-mark";
 import { Icon } from "@/components/icon";
 import { TriskeleMark } from "@/components/triskele-mark";
 
@@ -26,11 +26,8 @@ function Header() {
                  bg-void/70 backdrop-blur-md border-b border-white/5"
     >
       <div className="max-w-container-max mx-auto w-full flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2.5 min-w-0">
-          <BrandMark size="md" className="shrink-0" />
-          <span className="text-card-title md:text-section-title font-display font-semibold tracking-tight truncate">
-            Triskele
-          </span>
+        <Link href="/" className="flex items-center min-w-0" aria-label="Triskele Vault — home">
+          <BrandLockup size="md" className="h-9 w-auto md:h-10 shrink-0" />
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-small text-mist">
           <a href="#use-cases" className="hover:text-white transition-colors">

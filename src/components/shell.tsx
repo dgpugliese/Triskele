@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth-provider";
 import { SignedInBadge } from "./auth-gate";
-import { BrandMark } from "./brand-mark";
+import { BrandLockup } from "./brand-mark";
 import { Icon } from "./icon";
 
 const NAV = [
@@ -45,11 +45,8 @@ function TopBar({
     <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-obsidian border-b border-white/10 px-gutter flex items-center">
       <div className="max-w-container-max mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/app" className="flex items-center gap-3">
-            <BrandMark size="md" />
-            <span className="text-page-title font-display font-semibold tracking-tight">
-              Triskele
-            </span>
+          <Link href="/app" className="flex items-center" aria-label="Triskele Vault — dashboard">
+            <BrandLockup size="md" className="h-8 w-auto" />
           </Link>
           <span className="hidden md:inline-flex chip chip-cipher">
             CLIENT-ENCRYPTED · QUORUM-SEALED
