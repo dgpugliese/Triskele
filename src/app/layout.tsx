@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Triskele — Quorum Vault",
   description:
     "A privacy-first encrypted vault that requires three trusted guardians to retrieve sensitive information.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#050608",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
