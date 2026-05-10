@@ -71,17 +71,21 @@ export function OnboardingGate({ children }: { children: React.ReactNode }) {
   const allDone = identities.length >= PRESETS.length;
 
   return (
-    <div className="min-h-screen px-6 md:px-10 py-12 grid place-items-center">
-      <div className="max-w-3xl w-full panel p-8 md:p-12 space-y-10">
+    <div className="min-h-screen px-5 sm:px-6 md:px-10 py-10 sm:py-12 grid place-items-center">
+      <div className="max-w-3xl w-full panel p-6 sm:p-8 md:p-12 space-y-8 sm:space-y-10">
         <div className="space-y-4">
-          <Link
-            href="/"
-            className="text-micro-mono font-mono text-ash hover:text-cipher-blue inline-flex items-center gap-1"
-          >
-            <Icon name="arrow_back" className="text-sm" /> Back to home
-          </Link>
-          <span className="chip chip-cipher inline-flex">SET UP YOUR VAULT</span>
-          <h1 className="text-[36px] md:text-hero font-display font-semibold tracking-tight text-white leading-tight">
+          <div>
+            <Link
+              href="/"
+              className="text-micro-mono font-mono text-ash hover:text-cipher-blue inline-flex items-center gap-1 py-1"
+            >
+              <Icon name="arrow_back" className="text-sm" /> Back to home
+            </Link>
+          </div>
+          <div>
+            <span className="chip chip-cipher">SET UP YOUR VAULT</span>
+          </div>
+          <h1 className="text-[32px] sm:text-[36px] md:text-hero font-display font-semibold tracking-tight text-white leading-tight">
             Let&apos;s create your trusted circle.
           </h1>
           <p className="text-body text-mist max-w-xl leading-relaxed">
