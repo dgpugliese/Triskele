@@ -82,6 +82,36 @@ This exercises the full seal→recover round-trip and asserts:
 - Sub-threshold combinations fail.
 - A guardian's wrapped fragment cannot be opened by a different guardian's key.
 
+## Deploy to Cloudflare Pages
+
+The repo is wired for Cloudflare Pages via `@cloudflare/next-on-pages`. Each route runs on
+the Workers edge runtime; no Node server is required.
+
+**One-time dashboard setup:**
+
+1. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
+2. Authorize the GitHub app, pick `dgpugliese/Triskele`.
+3. Configure the build:
+   - **Project name:** `triskele`
+   - **Production branch:** `main`
+   - **Framework preset:** Next.js
+   - **Build command:** `npm run pages:build`
+   - **Build output directory:** `.vercel/output/static`
+   - **Environment variables (optional, only if using Supabase):**
+     - `NEXT_PUBLIC_SUPABASE_URL`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Save and Deploy. The first build takes ~3 min. Subsequent pushes to `main` auto-deploy;
+   PRs get preview URLs.
+
+The deploy lands at `https://triskele.pages.dev`.
+
+**Local preview before pushing:**
+
+```bash
+npm run pages:build      # builds to .vercel/output/static
+npm run pages:preview    # boots the same edge runtime locally via wrangler
+```
+
 ## Threat model — what the server can and can't do
 
 **Can:**

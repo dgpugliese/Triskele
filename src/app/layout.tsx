@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+// @cloudflare/next-on-pages requires server-rendered routes to use the edge runtime.
+// Declared on the root layout so every nested route inherits it.
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Triskele — Quorum Vault",
   description:
