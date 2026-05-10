@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Icon } from "./icon";
+import { BrandMark } from "./brand-mark";
 
 /**
  * Minimal chrome shared by /login and /signup. Keeps a back-to-home link and
@@ -11,9 +11,7 @@ export function AuthChrome({ children }: { children: React.ReactNode }) {
       <header className="px-5 sm:px-6 md:px-10 h-16 md:h-20 flex items-center border-b border-white/5">
         <div className="max-w-container-max mx-auto w-full flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <span className="w-8 h-8 rounded bg-cipher-blue grid place-items-center shadow-cipher-glow shrink-0">
-              <Icon name="shield" filled className="text-void text-base" />
-            </span>
+            <BrandMark size="md" className="shrink-0" />
             <span className="text-card-title md:text-section-title font-display font-semibold tracking-tight truncate">
               Triskele
             </span>
