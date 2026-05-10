@@ -43,7 +43,7 @@ export function Recover({ vaultId }: { vaultId: string }) {
         reason,
         requesterPublicKeyJwk: identity.publicKeyJwk,
       });
-      router.push(`/vaults/${vaultId}?req=${req.id}`);
+      router.push(`/app/vaults/${vaultId}?req=${req.id}`);
     } finally {
       setBusy(false);
     }
@@ -55,51 +55,55 @@ export function Recover({ vaultId }: { vaultId: string }) {
     <div className="space-y-10">
       <header className="space-y-3">
         <div className="flex items-center gap-2 text-micro-mono font-mono text-ash">
-          <Link href="/" className="hover:text-cipher-blue">Vaults</Link>
+          <Link href="/app" className="hover:text-cipher-blue">Vaults</Link>
           <Icon name="chevron_right" className="text-sm" />
-          <Link href={`/vaults/${vaultId}`} className="hover:text-cipher-blue">{v.title}</Link>
+          <Link href={`/app/vaults/${vaultId}`} className="hover:text-cipher-blue">{v.title}</Link>
           <Icon name="chevron_right" className="text-sm" />
           <span className="text-white">Open</span>
         </div>
         <h1 className="text-page-title md:text-hero font-display tracking-tight text-white">
-          Initiate recovery
+          Ask to open this vault
         </h1>
         <p className="text-body text-mist max-w-2xl">
-          A signed request will be dispatched to {v.guardians.length} guardians. Each must
-          re-wrap their fragment to your ephemeral key before you can reconstruct the
-          data-encryption key locally.
+          We&apos;ll send a request to all {v.guardians.length} of your guardians. Once
+          they approve, this device will pull the pieces back together and unlock the vault.
         </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <section className="lg:col-span-8 space-y-6">
           <div className="panel p-6 space-y-4">
-            <Field label="Reason for recovery (visible to guardians)">
+            <Field
+              label="Why are you opening this?"
+              hint="Your guardians will see this. Be specific — it helps them decide quickly."
+            >
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 className="input-cipher w-full min-h-[120px]"
+                placeholder="e.g. Estate trustee asked for next-of-kin access — case #4421."
               />
             </Field>
             <div className="flex items-start gap-3 px-4 py-3 border border-seal-amber/30 bg-seal-amber/5 rounded">
               <Icon name="warning" className="text-seal-amber" />
               <div>
                 <p className="text-small text-white">
-                  Recovery is auditable and irreversible.
+                  Every action is logged. Once your guardians approve, the vault opens.
                 </p>
                 <p className="text-micro-mono font-mono text-ash mt-1">
-                  Guardians: {guardianNames}
+                  Going to: {guardianNames}
                 </p>
               </div>
             </div>
             <button onClick={handleInitiate} disabled={busy} className="btn-primary">
               {busy ? (
                 <>
-                  <Icon name="hourglass_top" /> DISPATCHING…
+                  <span className="w-4 h-4 rounded-full border-2 border-void/40 border-t-void animate-spin" />
+                  Sending…
                 </>
               ) : (
                 <>
-                  <Icon name="send" /> Dispatch to quorum
+                  <Icon name="send" /> Ask my guardians
                 </>
               )}
             </button>
@@ -108,15 +112,15 @@ export function Recover({ vaultId }: { vaultId: string }) {
 
         <aside className="lg:col-span-4 space-y-6">
           <div className="panel p-6 space-y-4">
-            <h3 className="text-micro-mono font-mono font-bold text-ash uppercase">
+            <h3 className="text-micro-mono font-mono font-bold text-ash uppercase tracking-widest">
               What happens next
             </h3>
             <ol className="space-y-3 text-small text-mist">
-              <Step n={1}>Each guardian sees a pending request in their inbox.</Step>
-              <Step n={2}>If they approve, their device decrypts their fragment, then
-                re-encrypts it to your ephemeral public key.</Step>
-              <Step n={3}>When ≥ {v.threshold} approvals are in, your device combines
-                the fragments and decrypts the blob.</Step>
+              <Step n={1}>Your guardians get a notification with the reason you wrote.</Step>
+              <Step n={2}>Each one approves — or denies — from their own device.</Step>
+              <Step n={3}>
+                When {v.threshold} of them say yes, this device unlocks the vault.
+              </Step>
             </ol>
           </div>
         </aside>
@@ -125,11 +129,20 @@ export function Recover({ vaultId }: { vaultId: string }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <label className="block space-y-1">
-      <span className="text-micro-mono font-mono text-ash uppercase">{label}</span>
+    <label className="block space-y-1.5">
+      <span className="text-small text-white font-medium block">{label}</span>
       {children}
+      {hint && <span className="text-micro-mono font-mono text-ash block">{hint}</span>}
     </label>
   );
 }

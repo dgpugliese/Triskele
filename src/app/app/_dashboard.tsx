@@ -35,23 +35,29 @@ export function Dashboard() {
 
   return (
     <div className="space-y-12">
-      <header className="space-y-3">
-        <div className="flex items-center gap-3">
-          <span className="chip chip-cipher">QUORUM-SEALED</span>
-          <span className="chip chip-ash">{identity.displayName.toUpperCase()}</span>
+      <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="chip chip-cipher">QUORUM-SEALED</span>
+            <span className="chip chip-ash">{identity.displayName.toUpperCase()}</span>
+          </div>
+          <h1 className="text-page-title md:text-hero font-display tracking-tight text-white">
+            Your vaults
+          </h1>
+          <p className="text-body text-mist max-w-2xl">
+            Each vault is encrypted on this device and split between three guardians. You
+            can&apos;t open it without them. They can&apos;t open it without you.
+          </p>
         </div>
-        <h1 className="text-page-title md:text-hero font-display tracking-tight text-white">
-          Active Vaults
-        </h1>
-        <p className="text-body text-mist max-w-2xl">
-          Your cryptographic assets are sealed with AES-GCM-256 and split via Shamir secret
-          sharing across your guardians. The server holds ciphertext only — no fragment alone
-          can reveal a thing.
-        </p>
+        {vaults && vaults.length > 0 && (
+          <Link href="/app/vaults/new" className="btn-primary self-start md:self-end">
+            <Icon name="enhanced_encryption" /> New vault
+          </Link>
+        )}
       </header>
 
       {vaults === null ? (
-        <p className="text-micro-mono font-mono text-ash">SYNCING…</p>
+        <SkeletonGrid />
       ) : vaults.length === 0 ? (
         <EmptyState />
       ) : (
@@ -60,13 +66,13 @@ export function Dashboard() {
             <VaultCard key={v.id} v={v} mine={v.ownerId === identity.userId} />
           ))}
           <Link
-            href="/vaults/new"
+            href="/app/vaults/new"
             className="col-span-12 md:col-span-6 lg:col-span-4 panel-raised border-dashed p-6 min-h-[180px]
                        flex flex-col items-center justify-center text-ash hover:text-cipher-blue
-                       hover:border-cipher-blue/30 transition-colors"
+                       hover:border-cipher-blue/30 transition-colors group"
           >
-            <Icon name="add" className="text-3xl mb-2" />
-            <span className="text-micro-mono font-mono uppercase">Provision new vault</span>
+            <Icon name="add" className="text-3xl mb-2 transition-transform group-hover:scale-110" />
+            <span className="text-micro-mono font-mono uppercase tracking-widest">New vault</span>
           </Link>
         </div>
       )}
@@ -76,20 +82,47 @@ export function Dashboard() {
 
 function EmptyState() {
   return (
-    <div className="panel p-12 text-center space-y-6">
-      <div className="w-16 h-16 mx-auto rounded-full border border-cipher-blue/30 grid place-items-center">
+    <div className="panel p-12 md:p-16 text-center space-y-6 relative overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[500px] h-[500px] pointer-events-none opacity-50"
+        style={{
+          background:
+            "radial-gradient(circle at center, rgba(94,231,255,0.10) 0%, transparent 60%)",
+        }}
+      />
+      <div className="relative w-20 h-20 mx-auto rounded-full border border-cipher-blue/30 grid place-items-center shadow-cipher-glow">
         <Icon name="enhanced_encryption" className="text-cipher-blue text-3xl" />
       </div>
-      <div className="space-y-2">
-        <h2 className="text-section-title font-display text-white">No vaults yet.</h2>
+      <div className="relative space-y-2">
+        <h2 className="text-section-title font-display text-white">
+          Nothing sealed yet.
+        </h2>
         <p className="text-body text-mist max-w-md mx-auto">
-          Provision your first vault. You will pick three guardians, write your secret
-          payload, and the data-encryption key will be split across the quorum on this device.
+          Write something only the right people should see. Pick three guardians.
+          We&apos;ll handle the cryptography from here.
         </p>
       </div>
-      <Link href="/vaults/new" className="btn-primary inline-flex">
-        <Icon name="key" /> Seal a new vault
+      <Link href="/app/vaults/new" className="btn-primary inline-flex relative">
+        <Icon name="enhanced_encryption" /> Create your first vault
       </Link>
+    </div>
+  );
+}
+
+function SkeletonGrid() {
+  return (
+    <div className="grid grid-cols-12 gap-6">
+      <div className="col-span-12 lg:col-span-8 panel p-8 space-y-4">
+        <div className="h-3 w-24 rounded bg-slate animate-pulse" />
+        <div className="h-7 w-1/2 rounded bg-slate animate-pulse" />
+        <div className="h-4 w-3/4 rounded bg-slate/60 animate-pulse" />
+        <div className="h-20 w-72 rounded bg-slate/40 animate-pulse mt-4" />
+      </div>
+      <div className="col-span-12 md:col-span-6 lg:col-span-4 panel-raised p-6 space-y-3">
+        <div className="h-3 w-20 rounded bg-slate animate-pulse" />
+        <div className="h-32 rounded bg-slate/30 animate-pulse" />
+      </div>
     </div>
   );
 }
@@ -104,7 +137,7 @@ function VaultCard({ v, mine }: { v: Row & { guardianCount: number }; mine: bool
       : "chip-ash";
   return (
     <Link
-      href={`/vaults/${v.id}`}
+      href={`/app/vaults/${v.id}`}
       className="col-span-12 lg:col-span-8 panel p-8 hover:border-white/20 transition-colors"
     >
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">

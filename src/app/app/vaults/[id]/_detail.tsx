@@ -36,7 +36,7 @@ export function VaultDetailScreen({ vaultId }: { vaultId: string }) {
       <div className="panel p-10 text-center">
         <Icon name="error_outline" className="text-breach-red text-3xl" />
         <p className="text-body text-mist mt-3">No vault with this id.</p>
-        <Link href="/" className="btn-secondary mt-4 inline-flex">
+        <Link href="/app" className="btn-secondary mt-4 inline-flex">
           Back to dashboard
         </Link>
       </div>
@@ -86,7 +86,7 @@ export function VaultDetailScreen({ vaultId }: { vaultId: string }) {
     <div className="space-y-10">
       <header className="space-y-4">
         <div className="flex items-center gap-2 text-micro-mono font-mono text-ash">
-          <Link href="/" className="hover:text-cipher-blue">
+          <Link href="/app" className="hover:text-cipher-blue">
             Vaults
           </Link>
           <Icon name="chevron_right" className="text-sm" />
@@ -117,19 +117,27 @@ export function VaultDetailScreen({ vaultId }: { vaultId: string }) {
           </div>
           <div className="flex gap-3">
             {isOwner && !v.activeRequest && (
-              <Link href={`/vaults/${v.id}/recover`} className="btn-primary">
+              <Link href={`/app/vaults/${v.id}/recover`} className="btn-primary">
                 <Icon name="key" /> Open vault
               </Link>
             )}
             {isOwner && v.activeRequest && ready && (
               <button onClick={handleReconstruct} disabled={busy} className="btn-primary">
-                <Icon name="lock_open" />
-                {busy ? "RECONSTRUCTING…" : "Reconstruct & decrypt"}
+                {busy ? (
+                  <>
+                    <span className="w-4 h-4 rounded-full border-2 border-void/40 border-t-void animate-spin" />
+                    Decrypting…
+                  </>
+                ) : (
+                  <>
+                    <Icon name="lock_open" /> Unlock & decrypt
+                  </>
+                )}
               </button>
             )}
             {isOwner && v.activeRequest && !ready && (
               <span className="btn-secondary cursor-default">
-                <Icon name="hourglass_top" /> Waiting on quorum ({approvals}/{v.threshold})
+                <Icon name="hourglass_top" /> Waiting on guardians ({approvals}/{v.threshold})
               </span>
             )}
           </div>
@@ -140,9 +148,14 @@ export function VaultDetailScreen({ vaultId }: { vaultId: string }) {
         <section className="lg:col-span-8 space-y-8">
           <div className="panel overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-graphite/30">
-              <h3 className="text-micro-mono font-mono font-bold text-cipher-blue">
-                CIPHERTEXT.BLOB
-              </h3>
+              <div className="space-y-0.5">
+                <h3 className="text-micro-mono font-mono font-bold text-cipher-blue tracking-widest">
+                  CIPHERTEXT
+                </h3>
+                <p className="text-micro-mono font-mono text-ash">
+                  This is what the server sees. Nothing else.
+                </p>
+              </div>
               <span className="text-micro-mono font-mono text-ash">
                 {Math.ceil(v.blob.ciphertext.length * 0.75)} B · AES-GCM-256
               </span>
@@ -151,27 +164,27 @@ export function VaultDetailScreen({ vaultId }: { vaultId: string }) {
               {cipherPreview}
               {"\n[ … data truncated … ]"}
             </pre>
-            <div className="px-6 py-6 border-t border-white/5 space-y-4">
+            <div className="px-6 py-6 border-t border-white/5">
               <div className="flex items-center gap-3 py-2 px-4 border border-cipher-blue/20 bg-cipher-blue/5 rounded">
                 <Icon name="info" className="text-cipher-blue" />
-                <p className="text-small text-cipher-blue italic">
-                  Payload was encrypted locally before any storage. Server holds ciphertext
-                  and wrapped fragments only.
+                <p className="text-small text-cipher-blue">
+                  Encrypted on this device before storage. To unlock it, your guardians have
+                  to agree.
                 </p>
               </div>
             </div>
           </div>
 
           {unsealed && (
-            <div className="panel border-proof-green/40 p-6 space-y-3">
-              <div className="flex items-center gap-3">
+            <div className="panel border-proof-green/40 p-6 space-y-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <Icon name="check_circle" className="text-proof-green" filled />
                 <h3 className="text-card-title font-semibold text-white">
-                  Plaintext recovered
+                  Unlocked.
                 </h3>
-                <span className="chip chip-sealed">QUORUM SATISFIED</span>
+                <span className="chip chip-sealed">QUORUM AGREED</span>
               </div>
-              <pre className="bg-void p-4 rounded font-mono text-small text-on-surface whitespace-pre-wrap break-words">
+              <pre className="bg-void p-4 rounded font-mono text-small text-on-surface whitespace-pre-wrap break-words border border-proof-green/20">
                 {unsealed}
               </pre>
               <button
