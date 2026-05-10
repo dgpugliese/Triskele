@@ -68,6 +68,35 @@ export class LocalVaultStore implements VaultStore {
     return identity;
   }
 
+  /** Bind a local identity to a Supabase auth.users.id (used when auth is configured). */
+  async ensureIdentityForAuthUser(
+    authUserId: string,
+    displayName: string,
+    publicKeyJwk: JsonWebKey,
+  ): Promise<Identity> {
+    const list = read<Identity[]>(IDENTITIES_KEY, []);
+    const existing = list.find((i) => i.userId === authUserId);
+    if (existing) {
+      write(ACTIVE_KEY, existing.userId);
+      return existing;
+    }
+    const identity: Identity = { userId: authUserId, displayName, publicKeyJwk };
+    list.push(identity);
+    write(IDENTITIES_KEY, list);
+    write(ACTIVE_KEY, identity.userId);
+    return identity;
+  }
+
+  async getIdentityByAuthUserId(authUserId: string): Promise<Identity | null> {
+    return (
+      read<Identity[]>(IDENTITIES_KEY, []).find((i) => i.userId === authUserId) ?? null
+    );
+  }
+
+  async switchIdentityByAuthUserId(authUserId: string): Promise<void> {
+    write(ACTIVE_KEY, authUserId);
+  }
+
   async listIdentities(): Promise<Identity[]> {
     return read<Identity[]>(IDENTITIES_KEY, []);
   }
@@ -226,6 +255,15 @@ export class LocalVaultStore implements VaultStore {
       createdAt: new Date().toISOString(),
     });
     write(EVENTS_KEY, events);
+  }
+
+  /** All audit events for vaults the current identity can see (owner or guardian). */
+  async listAuditEvents(): Promise<AuditEvent[]> {
+    const vaults = await this.listVaults();
+    const visible = new Set(vaults.map((v) => v.id));
+    return read<AuditEvent[]>(EVENTS_KEY, [])
+      .filter((e) => visible.has(e.vaultId))
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   }
 
   getIdentityById(userId: string): Identity | null {

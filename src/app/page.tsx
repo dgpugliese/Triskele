@@ -9,7 +9,6 @@ export default function LandingPage() {
       <main>
         <Hero />
         <TrustStrip />
-        <HowItWorks />
         <UseCases />
         <Mechanics />
         <FinalCta />
@@ -35,9 +34,6 @@ function Header() {
           </span>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-small text-mist">
-          <a href="#how-it-works" className="hover:text-white transition-colors">
-            How it works
-          </a>
           <a href="#use-cases" className="hover:text-white transition-colors">
             Who it&apos;s for
           </a>
@@ -45,14 +41,22 @@ function Header() {
             What we can&apos;t do
           </a>
         </nav>
-        <Link
-          href="/app"
-          className="text-micro-mono font-mono uppercase tracking-wider px-3.5 sm:px-4 py-2.5 border border-white/10 rounded
-                     hover:border-cipher-blue/40 hover:text-cipher-blue transition-colors whitespace-nowrap shrink-0"
-        >
-          <span className="hidden sm:inline">Open the app →</span>
-          <span className="sm:hidden">Open app →</span>
-        </Link>
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <Link
+            href="/login"
+            className="hidden sm:inline-flex text-micro-mono font-mono uppercase tracking-wider px-3 py-2.5 text-ash
+                       hover:text-cipher-blue transition-colors whitespace-nowrap"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-micro-mono font-mono uppercase tracking-wider px-3.5 sm:px-4 py-2.5 border border-cipher-blue/40 rounded
+                       text-cipher-blue hover:bg-cipher-blue hover:text-void transition-colors whitespace-nowrap"
+          >
+            Get started →
+          </Link>
+        </div>
       </div>
     </header>
   );
@@ -77,14 +81,14 @@ function Hero() {
               team&apos;s break-glass keys. The plan you hope no one ever needs.
             </p>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
-              <Link href="/app" className="btn-primary text-small w-full sm:w-auto">
+              <Link href="/signup" className="btn-primary text-small w-full sm:w-auto">
                 <Icon name="enhanced_encryption" /> Open your first vault
               </Link>
               <Link
-                href="#how-it-works"
+                href="/login"
                 className="text-small text-ash hover:text-white transition-colors inline-flex items-center gap-1 self-start sm:self-auto px-1 py-2 sm:p-0"
               >
-                See how it works
+                I already have an account
                 <Icon name="arrow_forward" className="text-base" />
               </Link>
             </div>
@@ -162,67 +166,6 @@ function TrustStrip() {
           </li>
         ))}
       </ul>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  const steps = [
-    {
-      n: "01",
-      icon: "edit_note",
-      title: "Write what matters.",
-      body:
-        "A will. The recovery codes. The password to the password manager. Triskele locks it in your browser before it ever leaves your device.",
-    },
-    {
-      n: "02",
-      icon: "groups",
-      title: "Choose three people you trust.",
-      body:
-        "Each guardian gets a piece of the key — never the whole thing. Alone, none of them can open the vault. Together, they can.",
-    },
-    {
-      n: "03",
-      icon: "key",
-      title: "They agree, or it stays sealed.",
-      body:
-        "When it's time to unseal — by you, or by someone you've named — every guardian has to approve. The server can't bypass them. Neither can we.",
-    },
-  ];
-  return (
-    <section id="how-it-works" className="py-20 sm:py-24 md:py-36 scroll-mt-20">
-      <div className="max-w-container-max mx-auto px-5 sm:px-6 md:px-10">
-        <div className="max-w-2xl mb-10 sm:mb-14 md:mb-16 space-y-4">
-          <span className="chip chip-cipher inline-flex">HOW IT WORKS</span>
-          <h2 className="text-[28px] sm:text-[36px] md:text-[44px] leading-tight font-display font-semibold tracking-tight text-white">
-            Three keys. One vault. No shortcuts.
-          </h2>
-          <p className="text-body text-mist">
-            Triskele uses a 60-year-old idea called Shamir secret sharing. Your secret is
-            split into three pieces; you decide who holds them.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {steps.map((s) => (
-            <div
-              key={s.n}
-              className="panel p-6 sm:p-8 space-y-4 sm:space-y-5 hover:border-cipher-blue/30 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-micro-mono font-mono text-cipher-blue tracking-widest">
-                  {s.n}
-                </span>
-                <Icon name={s.icon} className="text-cipher-blue text-2xl" />
-              </div>
-              <h3 className="text-card-title sm:text-section-title font-display font-semibold text-white tracking-tight">
-                {s.title}
-              </h3>
-              <p className="text-small text-mist leading-relaxed">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
@@ -381,7 +324,7 @@ function FinalCta() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 md:justify-end">
-              <Link href="/app" className="btn-primary w-full sm:w-auto">
+              <Link href="/signup" className="btn-primary w-full sm:w-auto">
                 <Icon name="enhanced_encryption" /> Get started — it&apos;s free
               </Link>
             </div>

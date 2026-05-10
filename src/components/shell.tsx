@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useIdentity } from "./identity-provider";
+import { useAuth } from "./auth-provider";
+import { SignedInBadge } from "./auth-gate";
 import { Icon } from "./icon";
 
 const NAV = [
@@ -14,11 +15,11 @@ const NAV = [
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { identity, identities, switchTo } = useIdentity();
+  const { mode, identity, identities, switchTo } = useAuth();
 
   return (
     <div className="min-h-screen bg-void">
-      <TopBar identity={identity} identities={identities} onSwitch={switchTo} />
+      <TopBar mode={mode} identity={identity} identities={identities} onSwitch={switchTo} />
       <SideNav pathname={pathname} />
       <main className="md:pl-64 pt-24 pb-24 md:pb-12 px-gutter">
         <div className="max-w-container-max mx-auto">{children}</div>
@@ -29,12 +30,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function TopBar({
+  mode,
   identity,
   identities,
   onSwitch,
 }: {
-  identity: ReturnType<typeof useIdentity>["identity"];
-  identities: ReturnType<typeof useIdentity>["identities"];
+  mode: ReturnType<typeof useAuth>["mode"];
+  identity: ReturnType<typeof useAuth>["identity"];
+  identities: ReturnType<typeof useAuth>["identities"];
   onSwitch: (id: string) => Promise<void>;
 }) {
   return (
@@ -54,7 +57,7 @@ function TopBar({
           </span>
         </div>
         <div className="flex items-center gap-3">
-          {identities.length > 0 && (
+          {mode === "demo" && identities.length > 0 && (
             <select
               aria-label="Switch identity"
               value={identity?.userId ?? ""}
@@ -68,6 +71,7 @@ function TopBar({
               ))}
             </select>
           )}
+          <SignedInBadge />
           <div className="w-8 h-8 rounded-full bg-slate grid place-items-center border border-white/10">
             <Icon name="person" className="text-mist text-base" />
           </div>

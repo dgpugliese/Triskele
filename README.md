@@ -80,21 +80,39 @@ flow:
 3. Switch to each **Guardian**, open their inbox, **Approve & re-wrap**.
 4. Switch back to **Vault Owner**, return to the vault, click **Reconstruct & decrypt**.
 
-## Connecting Supabase (real backend)
+## Connecting Supabase (real auth + backend)
 
-1. Create a Supabase project, copy the URL and anon key into `.env.local`:
+When `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set, the app
+switches from **demo mode** to **Supabase mode**:
+
+- `/login` and `/signup` use Supabase Auth (email+password and magic-link supported).
+- `/app/*` is gated — unauthenticated visits redirect to `/login?next=…`.
+- Each authenticated user gets one device-bound ECDH keypair (created on first sign-in,
+  stored locally). The top-bar identity dropdown is hidden — the auth session is the
+  identity.
+
+Setup steps:
+
+1. Create a Supabase project (or use an existing one).
+2. Add the env vars locally (`.env.local`) and on the deploy (Cloudflare Pages → Settings →
+   Environment variables → Production):
    ```
-   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    ```
-2. Apply the schema:
+3. Apply the schema (vaults, guardians, recovery requests, fragment responses, audit
+   events, all with RLS):
    ```bash
    supabase link --project-ref <ref>
-   supabase db push   # or run supabase/migrations/0001_init.sql in the SQL editor
+   supabase db push   # or paste supabase/migrations/0001_init.sql into the SQL editor
    ```
-3. Wire the Supabase-backed `VaultStore` (the type in `src/lib/store/types.ts`) — the local
-   store and Supabase store share the same interface, so a Supabase implementation drops in
-   without UI changes.
+4. (Optional) Enable email confirmation under Authentication → Providers → Email so the
+   signup confirmation flow lights up.
+
+The Supabase-backed `VaultStore` is a follow-up — for now, vault metadata still lives in
+localStorage even in Supabase mode. Migration is mechanical: implement the `VaultStore`
+interface in `src/lib/store/types.ts` against Supabase tables and swap the import in
+the pages.
 
 ## Verifying the cryptography
 
