@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import { Icon } from "@/components/icon";
 import { TriskeleMark } from "@/components/triskele-mark";
 
@@ -26,9 +27,7 @@ function Header() {
     >
       <div className="max-w-container-max mx-auto w-full flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2.5 min-w-0">
-          <span className="w-8 h-8 rounded bg-cipher-blue grid place-items-center shadow-cipher-glow shrink-0">
-            <Icon name="shield" filled className="text-void text-base" />
-          </span>
+          <BrandMark size="md" className="shrink-0" />
           <span className="text-card-title md:text-section-title font-display font-semibold tracking-tight truncate">
             Triskele
           </span>
@@ -340,9 +339,7 @@ function Footer() {
     <footer className="border-t border-white/5 py-8 sm:py-10">
       <div className="max-w-container-max mx-auto px-5 sm:px-6 md:px-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
         <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded bg-cipher-blue/80 grid place-items-center">
-            <Icon name="shield" filled className="text-void text-sm" />
-          </span>
+          <BrandMark size="sm" />
           <span className="text-small text-ash">
             Triskele · privacy-first encrypted vault
           </span>

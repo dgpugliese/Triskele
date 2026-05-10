@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./auth-provider";
 import { SignedInBadge } from "./auth-gate";
+import { BrandMark } from "./brand-mark";
 import { Icon } from "./icon";
 
 const NAV = [
@@ -45,9 +46,7 @@ function TopBar({
       <div className="max-w-container-max mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/app" className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded bg-cipher-blue grid place-items-center">
-              <Icon name="shield" filled className="text-void text-base" />
-            </span>
+            <BrandMark size="md" />
             <span className="text-page-title font-display font-semibold tracking-tight">
               Triskele
             </span>
