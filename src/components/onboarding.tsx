@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useIdentity } from "./identity-provider";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "./auth-provider";
 import { Icon } from "./icon";
 
 const PRESETS = [
@@ -29,22 +30,29 @@ const PRESETS = [
 ];
 
 export function OnboardingGate({ children }: { children: React.ReactNode }) {
-  const { identity, identities, ready, createIdentity, switchTo } = useIdentity();
+  const { mode, session, identity, identities, ready, createIdentity, switchTo } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const [working, setWorking] = useState<string | null>(null);
 
-  if (!ready) {
-    return (
-      <div className="min-h-screen grid place-items-center">
-        <div className="text-center space-y-3">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-cipher-blue/30 border-t-cipher-blue animate-spin" />
-          <p className="text-micro-mono font-mono text-ash uppercase tracking-widest">
-            Loading…
-          </p>
-        </div>
-      </div>
-    );
+  // Supabase mode: bounce unauthenticated visits to /login.
+  useEffect(() => {
+    if (!ready) return;
+    if (mode === "supabase" && !session) {
+      const next = encodeURIComponent(pathname || "/app");
+      router.replace(`/login?next=${next}`);
+    }
+  }, [ready, mode, session, pathname, router]);
+
+  if (!ready) return <Loader label="Loading…" />;
+
+  if (mode === "supabase") {
+    if (!session) return <Loader label="Redirecting to sign in…" />;
+    if (!identity) return <Loader label="Provisioning device keypair…" />;
+    return <>{children}</>;
   }
 
+  // Demo mode: show the provisioning UI when no identity is selected.
   if (identity) return <>{children}</>;
 
   const handleProvision = async () => {
@@ -182,6 +190,19 @@ export function OnboardingGate({ children }: { children: React.ReactNode }) {
             vault, and even then it&apos;s already encrypted before it leaves this page.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Loader({ label }: { label: string }) {
+  return (
+    <div className="min-h-screen grid place-items-center px-5">
+      <div className="text-center space-y-4">
+        <div className="w-10 h-10 mx-auto rounded-full border-2 border-cipher-blue/30 border-t-cipher-blue animate-spin" />
+        <p className="text-micro-mono font-mono text-ash uppercase tracking-widest">
+          {label}
+        </p>
       </div>
     </div>
   );
